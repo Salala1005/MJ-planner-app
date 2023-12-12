@@ -3,7 +3,7 @@ dayjs.extend(window.dayjs_plugin_advancedFormat);
 var currentDay = $("#currentDay");
 var timeBlock = $(".time-block");
 var currentHour = dayjs().hour();
-var clearBtn = $(".clear");
+var clearBtn = $("#clearBtn");
 
 // display the date
 var day = dayjs().format("DD-MM-YYYY");
@@ -13,8 +13,7 @@ currentDay.text(day);
 clearBtn.on("click", function (event) {
   event.preventDefault();
   localStorage.removeItem('plan');
-  $("#textarea-9").val("");
-  // location.reload();
+  $("textarea").val("");
 });
 
 // display color-code timeblock when is viewed
@@ -28,24 +27,38 @@ $(".time-block").each(function (i, timeBlock) {
     $(timeBlock).addClass("future");
   }
 
-  // $(timeBlock).children("textarea").val(localStorage.getItem(elementHour));
-
-  var localstorageData = 
+  var planObject = 
      {
-        9: $("#textarea-9").val(),
-        10: $("#textarea-10").val(),
-        11: $("#textarea-11").val(),
-        12: $("#textarea-12").val(),
-        13: $("#textarea-13").val(),
-        14: $("#textarea-14").val(),
-        15: $("#textarea-15").val(),
-        16: $("#textarea-16").val(),
-        17: $("#textarea-17").val(),
+      '9am': '',
+      '10am': '',
+      '11am': '',
+      '12pm': '',
+      '1pm': '',
+      '2pm': '',
+      '3pm': '',
+      '4pm': '',
+      '5pm': '',
       };
+
+  var localStorageData = JSON.parse(localStorage.getItem('plan')) || planObject;
+
+  // to persist on webpage after reload
+  $('#textarea-9').val(localStorageData['9am']);
+  $('#textarea-10').val(localStorageData['10am']);
+  $('#textarea-11').val(localStorageData['11am']);
+  $('#textarea-12').val(localStorageData['12pm']);
+  $('#textarea-13').val(localStorageData['1pm']);
+  $('#textarea-14').val(localStorageData['2pm']);
+  $('#textarea-15').val(localStorageData['3pm']);
+  $('#textarea-16').val(localStorageData['4pm']);
+  $('#textarea-17').val(localStorageData['5pm']);
 
   // save it to local storage when it's clicked save button
   $(timeBlock).on("click", ".saveBtn", function () {
     var storeValue = $(timeBlock).children("textarea").val();
-    localStorage.setItem('plan', JSON.stringify(localstorageData));
+    var key = $(timeBlock).children(".hour").text();
+    localStorageData = JSON.parse(localStorage.getItem('plan')) || planObject;
+    localStorageData[key] = storeValue;
+    localStorage.setItem('plan',JSON.stringify(localStorageData))
   });
 });
